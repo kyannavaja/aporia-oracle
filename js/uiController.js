@@ -6,7 +6,7 @@
 
 const UI = {
 
-  chatlog: document.getElementById("chat-log"),
+  chatLog: document.getElementById("chat-log"),
   graphOutput: document.getElementById("graph-output"),
 
   addMessage(sender, text) {
