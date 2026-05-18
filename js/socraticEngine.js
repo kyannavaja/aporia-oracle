@@ -18,7 +18,7 @@ const SocraticEngine = {
   ],
 
   generateQuestion(userStatement) {
-    const i = Math.floor(Math.random() * this.questiontemplates.length)
+    const i = Math.floor(Math.random() * this.questionTemplates.length)
     return this.questionTemplates[i];
   }
 };
