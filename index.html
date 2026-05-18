@@ -1,4 +1,31 @@
-<script src="js/socraticEngine.js"></script>
-<script src="js/reasoningGraph.js"></script>
-<script src="js/uiController.js"></script>
-<script src="js/main.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Theseus, Socratic Reasoning Companion</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="app">
+
+    <!-- Chat section -->
+    <div id="chat-container">
+      <div id="chat-log"></div>div>
+      <input id="user-input" type="text" placeholder="Type your thought...">
+    </div>
+
+    <!-- Reasoning graph section -->
+    <div id="graph-container">
+        <h2>Golden Thread</h2>
+        <pre id="graph-output"></pre>
+    </div>
+
+  </div>
+
+  <script src="js/socraticEngine.js"></script>
+  <script src="js/reasoningGraph.js"></script>
+  <script src="js/uiController.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
