@@ -1,1 +1,44 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  display: flex;
+  height: 100vh;
+}
 
+#app {
+  display: flex;
+  width: 100%;
+}
+
+/* Chat UI */
+#chat-container {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #ddd;
+}
+
+#chat-log .user {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+#chat-log .bot {
+  margin-bottom: 10px;
+  color: #444;
+}
+
+#user-input {
+  padding: 15px;
+  border: none;
+  border-top: 1px solid #ddd;
+  font-size: 16px;
+}
+
+/* Graph panel */
+#graph-container {
+  flex: 1;
+  padding: 20px;
+  background: #fafafa;
+  overflow-y: auto;
+}
