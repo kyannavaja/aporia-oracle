@@ -22,7 +22,7 @@ const ReasoningGraph = {
   render() {
     let out = "";
     this.nodes.forEach(n=> {
-      out += `[${n.id}] (${n.type}) ${n.text}\n`;
+      out += "[${n.id}] (${n.type}) ${n.text}\n";
     });
     return out;
   }
