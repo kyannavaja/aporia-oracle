@@ -12,7 +12,7 @@ input.addEventListener("keydown", function(event) {
     if (!userText) return;
 
     // Display user message
-    UI.addMessage("user", userText);
+    UI.addMessage("user", "claim", userText);
 
     // Add user node
     const userNodeId = ReasoningGraph.addNode(userText, "claim");
@@ -21,7 +21,7 @@ input.addEventListener("keydown", function(event) {
     const botQuestion = SocraticEngine.generateQuestion(userText);
 
     // Display bot message
-    UI.addMessage("bot", botQuestion);
+    UI.addMessage("bot", "question", botQuestion);
 
     // Add bot node
     const botNodeId = ReasoningGraph.addNode(botQuestion, "question");
