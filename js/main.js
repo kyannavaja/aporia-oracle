@@ -27,7 +27,7 @@ input.addEventListener("keydown", function(event) {
     const botNodeId = ReasoningGraph.addNode(botQuestion, "question");
 
     // Link nodes
-    ReasoningGraph.addEdge(boteNodeId, userNodeId, "challenges");
+    ReasoningGraph.addEdge(botNodeId, userNodeId, "challenges");
 
     // Update graph panel
     UI.updateGraph();
