@@ -12,7 +12,7 @@ const SocraticEngine = {
     "How do you know this is true?",
     "What follows from that?",
     "Is there an alternative explanation?",
-    "Why do you believe this holdS?",
+    "Why do you believe this holds?",
     "What evidence supports this?",
     "Could the opposite also be true?"
   ],
