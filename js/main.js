@@ -19,6 +19,7 @@ input.addEventListener("keydown", function(event) {
 
     //Generate Socratic question
     const botQuestion = SocraticEngine.generateQuestion(userText);
+    SocraticEngine.lastExpectedNodeType = SocraticEngine.question_to_node_type[botQuestion] || "claim";
 
     // Display bot message
     UI.addMessage("bot", botQuestion);
@@ -27,7 +28,7 @@ input.addEventListener("keydown", function(event) {
     const botNodeId = ReasoningGraph.addNode(botQuestion, "question");
 
     // Link nodes
-    ReasoningGraph.addEdge(botNodeId, userNodeId, "challenges");
+    ReasoningGraph.addEdge(userNodeId, botNodeId, "challenges");
 
     // Update graph panel
     UI.updateGraph();
