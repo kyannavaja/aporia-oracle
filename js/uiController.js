@@ -1,23 +1,27 @@
-/*
-  UI Controller
-  ----------------
-  Hanles chat + graph updates.
-*/
+const UIController = {
 
-const UI = {
+  lastNodeId: null,   // ⭐ Track the previous node for chaining
 
-  chatLog: document.getElementById("chat-log"),
-  graphOutput: document.getElementById("graph-output"),
+  init() {
+    const input = document.getElementById("user-input");
+    const chatLog = document.getElementById("chat-log");
 
-  addMessage(sender, text) {
-    const div = document.createElement("div");
-    div.className = sender;
-    div.textContent = text;
-    this.chatLog.appendChild(div);
-    this.chatLog.scrollTop = this.chatLog.scrollHeight;
-  },
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const text = input.value.trim();
+        if (text.length === 0) return;
 
-  updateGraph() {
-    this.graphOutput.textContent = ReasoningGraph.render();
+        // ⭐ Display user message
+        chatLog.innerHTML += `<div class="user-msg">${text}</div>`;
+        input.value = "";
+
+        // ⭐ Process Socratic turn → adds node, edge, updates graph
+        this.lastNodeId = SocraticEngine.processTurn(text, this.lastNodeId);
+
+        // ⭐ Display the Socratic question in chat
+        const question = ReasoningGraph.nodes[this.lastNodeId - 1].text;
+        chatLog.innerHTML += `<div class="bot-msg">${question}</div>`;
+      }
+    });
   }
 };
