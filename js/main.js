@@ -1,38 +1,9 @@
 /*
-  Main App Logic
-  ----------------
-  Handles input -> graph -> Socratic question.
+  Main
+  ----
+  Initializes the UI.
 */
 
-const input = document.getElementById("user-input");
-
-input.addEventListener("keydown", function(event) {
-  if (event.key === "Enter") {
-    const userText = input.value.trim();
-    if (!userText) return;
-
-    // Display user message
-    UIController.addMessage("user", userText);
-
-    // Add user node
-    const userNodeId = ReasoningGraph.addNode(userText, SocraticEngine.lastExpectedNodeType || "claim");
-
-    //Generate Socratic question
-    const botQuestion = SocraticEngine.generateQuestion(userText);
-    SocraticEngine.lastExpectedNodeType = SocraticEngine.question_to_node_type[botQuestion] || "claim";
-
-    // Display bot message
-    UIController.addMessage("bot", botQuestion);
-
-    // Add bot node
-    const botNodeId = ReasoningGraph.addNode(botQuestion, "question");
-
-    // Link nodes
-    ReasoningGraph.addEdge(userNodeId, botNodeId, "challenges");
-
-    // Update graph panel
-    UIController.updateGraph();
-
-    input.value = "";
-  }
+document.addEventListener("DOMContentLoaded", () => {
+  UIController.init();
 });
