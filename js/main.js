@@ -12,7 +12,7 @@ input.addEventListener("keydown", function(event) {
     if (!userText) return;
 
     // Display user message
-    UI.addMessage("user", userText);
+    UIController.addMessage("user", userText);
 
     // Add user node
     const userNodeId = ReasoningGraph.addNode(userText, SocraticEngine.lastExpectedNodeType || "claim");
@@ -22,7 +22,7 @@ input.addEventListener("keydown", function(event) {
     SocraticEngine.lastExpectedNodeType = SocraticEngine.question_to_node_type[botQuestion] || "claim";
 
     // Display bot message
-    UI.addMessage("bot", botQuestion);
+    UIController.addMessage("bot", botQuestion);
 
     // Add bot node
     const botNodeId = ReasoningGraph.addNode(botQuestion, "question");
@@ -31,7 +31,7 @@ input.addEventListener("keydown", function(event) {
     ReasoningGraph.addEdge(userNodeId, botNodeId, "challenges");
 
     // Update graph panel
-    UI.updateGraph();
+    UIController.updateGraph();
 
     input.value = "";
   }
