@@ -30,5 +30,28 @@ const SocraticEngine = {
     const i = Math.floor(Math.random() * this.questionTemplates.length);
     return this.questionTemplates[i];
   }
+    // ⭐ NEW: Integrates Socratic questioning with the reasoning graph
+  processTurn(userStatement, previousNodeId = null) {
+    // 1. Generate a Socratic question
+    const question = this.generateQuestion(userStatement);
+
+    // 2. Map question → node type
+    const nodeType = this.question_to_node_type[question] || "claim";
+
+    // 3. Add node to the reasoning graph
+    const newNodeId = ReasoningGraph.addNode(question, nodeType);
+
+    // 4. Connect to previous node (forming the “golden thread”)
+    if (previousNodeId !== null) {
+      ReasoningGraph.addEdge(previousNodeId, newNodeId, "socratic");
+    }
+
+    // 5. Update the visual graph
+    ReasoningGraph.renderGraph();
+
+    // 6. Return the new node ID so the UI can chain turns
+    return newNodeId;
+  }
+
 };
     
