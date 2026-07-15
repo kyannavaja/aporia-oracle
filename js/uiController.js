@@ -1,4 +1,4 @@
-const UI = {
+const UIController = {
 
   lastNodeId: null,   // ⭐ Track the previous node for chaining
 
