@@ -29,8 +29,9 @@ const ReasoningGraph = {
   },
 
   addEdge(fromId, toId, type = "supports") {
-    this.edges.push({ fromId, toId, type });
-  },
+  this.edges.push({ source: fromId, target: toId, type });
+}
+,
 
   // ⭐ NEW: Obsidian-style force-directed graph renderer
   renderGraph() {
