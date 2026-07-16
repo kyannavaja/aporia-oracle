@@ -1,10 +1,9 @@
 /*
   Socratic Engine
   ----------------
-  Simple aporia tally:
-  1st aporia → pivot
-  2nd aporia → final pivot
-  3rd aporia → termination
+  Random question selection.
+  User responses inherit the bot's question type.
+  Aporia detection remains simple.
 */
 
 const SocraticEngine = {
@@ -49,6 +48,7 @@ const SocraticEngine = {
     return this.addBotNode(text, "claim", lastNodeId);
   },
 
+  // ⭐ NEW: Random question generator
   generateQuestion() {
     const types = ["question", "justification", "assumption"];
     const type = types[Math.floor(Math.random() * types.length)];
@@ -79,6 +79,7 @@ const SocraticEngine = {
 
   processTurn(userText, lastNodeId) {
 
+    // ⭐ Aporia detection
     if (this.isAporia(userText)) {
       this.aporiaCount++;
 
@@ -93,6 +94,7 @@ const SocraticEngine = {
       return this.endDialogue(lastNodeId);
     }
 
+    // ⭐ Normal Socratic turn: RANDOM question type
     const q = this.generateQuestion();
     return this.addBotNode(q.text, q.type, lastNodeId);
   }
