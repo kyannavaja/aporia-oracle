@@ -1,6 +1,6 @@
 const UIController = {
 
-  lastNodeId: null,   // ⭐ Track the previous node for chaining
+  lastNodeId: null,   // ⭐ Always track the last BOT node only
 
   init() {
     const input = document.getElementById("user-input");
@@ -11,11 +11,11 @@ const UIController = {
         const text = input.value.trim();
         if (text.length === 0) return;
 
-        // ⭐ Display user message in chat
+        // ⭐ Display user message
         chatLog.innerHTML += `<div class="user-msg">${text}</div>`;
         input.value = "";
 
-        // ⭐ Determine inherited colour + type from preceding bot node
+        // ⭐ Determine inherited colour + type from preceding BOT node
         let lastBotNode = null;
         if (this.lastNodeId !== null) {
           lastBotNode = ReasoningGraph.nodes.find(n => n.id === this.lastNodeId);
@@ -32,22 +32,22 @@ const UIController = {
           inheritedColor
         );
 
-        // ⭐ Link previous node → user node (Option A)
+        // ⭐ Link BOT → USER
         if (this.lastNodeId !== null) {
           ReasoningGraph.addEdge(this.lastNodeId, userNodeId);
         }
 
-        // ⭐ Update lastNodeId to user node
-        this.lastNodeId = userNodeId;
+        // ⭐ Process Socratic turn → adds BOT node
+        const botNodeId = SocraticEngine.processTurn(text, userNodeId);
 
-        // ⭐ Process Socratic turn → adds bot node + edge
-        this.lastNodeId = SocraticEngine.processTurn(text, this.lastNodeId);
+        // ⭐ Update lastNodeId ONLY to the BOT node
+        this.lastNodeId = botNodeId;
 
-        // ⭐ Display the Socratic question in chat
+        // ⭐ Display bot message
         const question = ReasoningGraph.nodes[this.lastNodeId - 1].text;
         chatLog.innerHTML += `<div class="bot-msg">${question}</div>`;
 
-        // Render updated graph
+        // ⭐ Render updated graph
         ReasoningGraph.renderGraph();
       }
     });
