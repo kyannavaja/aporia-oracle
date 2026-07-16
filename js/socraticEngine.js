@@ -1,17 +1,15 @@
 /*
   Socratic Engine
   ----------------
-  Simple aporia tally:
-  1st aporia → pivot
-  2nd aporia → final pivot
-  3rd aporia → termination
+  Random question selection.
+  User responses inherit the bot's question type.
+  Aporia detection remains simple.
 */
 
 const SocraticEngine = {
 
   aporiaCount: 0,
 
-  // Detect aporia phrases
   isAporia(text) {
     const phrases = [
       "i don't know",
@@ -26,35 +24,30 @@ const SocraticEngine = {
     return phrases.some(p => lower.includes(p));
   },
 
-  // Add BOT node and link it
   addBotNode(text, type, lastNodeId) {
     const nodeId = ReasoningGraph.addNode(text, type, "circle");
     ReasoningGraph.addEdge(lastNodeId, nodeId);
     return nodeId;
   },
 
-  // First aporia pivot
   askPivotQuestion(lastNodeId) {
     const text =
       "That's alright — uncertainty is part of inquiry. Let's try a different angle: what do you think might motivate this idea?";
     return this.addBotNode(text, "question", lastNodeId);
   },
 
-  // Second aporia pivot
   askFinalPivot(lastNodeId) {
     const text =
       "No problem. Maybe consider this: what underlying assumption might be shaping your view?";
     return this.addBotNode(text, "question", lastNodeId);
   },
 
-  // Third aporia → termination
   endDialogue(lastNodeId) {
     const text =
       "It seems we've reached aporia — a point where further questioning won't clarify things. Thank you for exploring this with me.";
     return this.addBotNode(text, "claim", lastNodeId);
   },
 
-  // Random question generator
   generateQuestion() {
     const types = ["question", "justification", "assumption"];
     const type = types[Math.floor(Math.random() * types.length)];
@@ -85,7 +78,6 @@ const SocraticEngine = {
 
   processTurn(userText, lastNodeId) {
 
-    // Aporia detection
     if (this.isAporia(userText)) {
       this.aporiaCount++;
 
@@ -97,12 +89,9 @@ const SocraticEngine = {
         return this.askFinalPivot(lastNodeId);
       }
 
-      if (this.aporiaCount === 3) {
-        return this.endDialogue(lastNodeId);
-      }
+      return this.endDialogue(lastNodeId);
     }
 
-    // Normal Socratic turn: RANDOM question type
     const q = this.generateQuestion();
     return this.addBotNode(q.text, q.type, lastNodeId);
   }
