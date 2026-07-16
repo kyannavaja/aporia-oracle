@@ -1,13 +1,18 @@
 const UIController = {
 
-  lastNodeId: null,      // last node in the chain (bot or user)
-  lastBotNodeId: null,   // last BOT node only (for colour/type inheritance)
+  lastNodeId: null,      // last node in the chain
+  lastBotNodeId: null,   // last BOT node only
+  conversationEnded: false, // ⭐ NEW: block input after aporia
 
   init() {
     const input = document.getElementById("user-input");
     const chatLog = document.getElementById("chat-log");
 
     input.addEventListener("keydown", (e) => {
+
+      // ⭐ Block further input after aporia termination
+      if (this.conversationEnded) return;
+
       if (e.key === "Enter") {
         const text = input.value.trim();
         if (text.length === 0) return;
@@ -25,7 +30,7 @@ const UIController = {
         const inheritedColor = lastBotNode ? lastBotNode.color : "#cccccc";
         const inheritedType  = lastBotNode ? lastBotNode.type  : "claim";
 
-        // Add USER node (square, inherits bot colour)
+        // Add USER node
         const userNodeId = ReasoningGraph.addNode(
           text,
           inheritedType,
@@ -33,23 +38,32 @@ const UIController = {
           inheritedColor
         );
 
-        // Link previous node → USER (if any)
+        // Link previous node → USER
         if (this.lastNodeId !== null) {
           ReasoningGraph.addEdge(this.lastNodeId, userNodeId);
         }
 
-        // Now process Socratic turn: engine adds BOT node, linked from USER
+        // Process Socratic turn → BOT node
         const botNodeId = SocraticEngine.processTurn(text, userNodeId);
 
-        // Update tracking:
-        this.lastNodeId = botNodeId;      // last node in chain
-        this.lastBotNodeId = botNodeId;   // last BOT node for next inheritance
+        // Update tracking
+        this.lastNodeId = botNodeId;
+        this.lastBotNodeId = botNodeId;
 
         // Display bot message
         const botNode = ReasoningGraph.nodes.find(n => n.id === botNodeId);
         const question = botNode ? botNode.text : "";
         if (question) {
           chatLog.innerHTML += `<div class="bot-msg">${question}</div>`;
+        }
+
+        // ⭐ Detect aporia termination
+        if (botNode.type === "claim" &&
+            botNode.text.includes("aporia")) {
+
+          this.conversationEnded = true;
+          input.disabled = true;
+          input.placeholder = "Dialogue concluded.";
         }
 
         // Render updated graph
