@@ -1,6 +1,6 @@
 const UIController = {
 
-  lastNodeId: null,   // ⭐ Always track the last BOT node only
+  lastNodeId: null,   // ⭐ Always track the last BOT node onlyyy
 
   init() {
     const input = document.getElementById("user-input");
