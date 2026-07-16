@@ -79,23 +79,24 @@ const SocraticEngine = {
 
   processTurn(userText, lastNodeId) {
 
-    // ⭐ Aporia detection
-    if (this.isAporia(userText)) {
-      this.aporiaCount++;
+  // ⭐ Aporia detection
+  if (this.isAporia(userText)) {
+    this.aporiaCount++;
 
-      if (this.aporiaCount === 1) {
-        return this.askPivotQuestion(lastNodeId);
-      }
-
-      if (this.aporiaCount === 2) {
-        return this.askFinalPivot(lastNodeId);
-      }
-
-      return this.endDialogue(lastNodeId);
+    // First aporia → pivot
+    if (this.aporiaCount === 1) {
+      return this.askPivotQuestion(lastNodeId);
     }
 
-    // ⭐ Normal Socratic turn: RANDOM question type
-    const q = this.generateQuestion();
-    return this.addBotNode(q.text, q.type, lastNodeId);
+    // Second aporia → TERMINATION (not final pivot)
+    if (this.aporiaCount === 2) {
+      return this.endDialogue(lastNodeId);
+    }
   }
+
+  // ⭐ Normal Socratic turn: RANDOM question type
+  const q = this.generateQuestion();
+  return this.addBotNode(q.text, q.type, lastNodeId);
+}
+
 };
