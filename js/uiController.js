@@ -47,7 +47,10 @@ const UIController = {
         const botNodeId = SocraticEngine.processTurn(text, userNodeId);
 
         // ⭐ SAFETY: Ensure botNodeId is valid
-        if (!botNodeId) return;
+        if (!botNodeId) {
+          console.warn("Bot node failed to generate, graph preserved.");
+          return;
+        }
 
         // Update tracking
         this.lastNodeId = botNodeId;
