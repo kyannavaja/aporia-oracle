@@ -40,9 +40,6 @@ const UIController = {
 
         const botNodeId = SocraticEngine.processTurn(text, userNodeId);
 
-        // SAFETY: ensure botNodeId is valid
-        if (!botNodeId && botNodeId !== 0) return;
-
         this.lastNodeId = botNodeId;
         this.lastBotNodeId = botNodeId;
 
@@ -52,8 +49,7 @@ const UIController = {
           chatLog.innerHTML += `<div class="bot-msg">${question}</div>`;
         }
 
-        // ⭐ Terminate ONLY when aporiaCount reaches 3
-        if (SocraticEngine.aporiaCount === 3) {
+        if (SocraticEngine.aporiaCount >= 3) {
           this.conversationEnded = true;
           input.disabled = true;
           input.placeholder = "Dialogue concluded.";
