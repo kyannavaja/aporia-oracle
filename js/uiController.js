@@ -54,7 +54,9 @@ const UIController = {
         input.placeholder = "Dialogue concluded.";
       }
 
+    if (!this.conversationEnded) {
       ReasoningGraph.renderGraph();
+    }
     });
   }
 };
