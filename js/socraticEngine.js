@@ -69,8 +69,8 @@ const SocraticEngine = {
     if (this.isAporia(userText)) {
       this.aporiaCount++;
 
-      if (this.aporiaCount === 1) return this.askPivot1(lastNodeId);
-      if (this.aporiaCount === 2) return this.askPivot2(lastNodeId);
+      if (this.aporiaCount === 1) return this.endDialogue(lastNodeId);
+      if (this.aporiaCount === 2) return this.endDialogue(lastNodeId);
 
       return this.endDialogue(lastNodeId);
     }
