@@ -1,8 +1,8 @@
 const UIController = {
 
-  lastNodeId: null,      // last node in the chain
-  lastBotNodeId: null,   // last BOT node only
-  conversationEnded: false, // ⭐ NEW: block input after aporia
+  lastNodeId: null,
+  lastBotNodeId: null,
+  conversationEnded: false,
 
   init() {
     const input = document.getElementById("user-input");
@@ -10,65 +10,46 @@ const UIController = {
 
     input.addEventListener("keydown", (e) => {
 
-      // ⭐ Block further input after aporia termination
       if (this.conversationEnded) return;
+      if (e.key !== "Enter") return;
 
-      if (e.key === "Enter") {
-        const text = input.value.trim();
-        if (text.length === 0) return;
+      const text = input.value.trim();
+      if (!text) return;
 
-        // Display user message
-        chatLog.innerHTML += `<div class="user-msg">${text}</div>`;
-        input.value = "";
+      // Display user message
+      chatLog.innerHTML += `<div class="user-msg">${text}</div>`;
+      input.value = "";
 
-        // Inherit colour + type from preceding BOT node
-        let lastBotNode = null;
-        if (this.lastBotNodeId !== null) {
-          lastBotNode = ReasoningGraph.nodes.find(n => n.id === this.lastBotNodeId);
-        }
+      // Inherit bot node style
+      const lastBotNode = ReasoningGraph.nodes.find(n => n.id === this.lastBotNodeId);
+      const inheritedColor = lastBotNode?.color || "#cccccc";
+      const inheritedType  = lastBotNode?.type  || "claim";
 
-        const inheritedColor = lastBotNode ? lastBotNode.color : "#cccccc";
-        const inheritedType  = lastBotNode ? lastBotNode.type  : "claim";
+      // Add USER node
+      const userNodeId = ReasoningGraph.addNode(text, inheritedType, "square", inheritedColor);
 
-        // Add USER node
-        const userNodeId = ReasoningGraph.addNode(
-          text,
-          inheritedType,
-          "square",
-          inheritedColor
-        );
-
-        // Link previous node → USER
-        if (this.lastNodeId !== null) {
-          ReasoningGraph.addEdge(this.lastNodeId, userNodeId);
-        }
-
-        // Process Socratic turn → BOT node
-        const botNodeId = SocraticEngine.processTurn(text, userNodeId);
-
-        // Update tracking
-        this.lastNodeId = botNodeId;
-        this.lastBotNodeId = botNodeId;
-
-        // Display bot message
-        const botNode = ReasoningGraph.nodes.find(n => n.id === botNodeId);
-        const question = botNode ? botNode.text : "";
-        if (question) {
-          chatLog.innerHTML += `<div class="bot-msg">${question}</div>`;
-        }
-
-        // ⭐ Detect aporia termination
-        if (botNode.text.includes("uncertainty is part of inquiry")) {
-    this.conversationEnded = true;
-    input.disabled = true;
-    input.placeholder = "Dialogue concluded.";
-}
-
-
-
-        // Render updated graph
-        ReasoningGraph.renderGraph();
+      if (this.lastNodeId !== null) {
+        ReasoningGraph.addEdge(this.lastNodeId, userNodeId);
       }
+
+      // Process Socratic turn → BOT node
+      const botNodeId = SocraticEngine.processTurn(text, userNodeId);
+
+      this.lastNodeId = botNodeId;
+      this.lastBotNodeId = botNodeId;
+
+      const botNode = ReasoningGraph.nodes.find(n => n.id === botNodeId);
+
+      chatLog.innerHTML += `<div class="bot-msg">${botNode.text}</div>`;
+
+      // END DIALOGUE when final aporia message appears
+      if (botNode.text.includes("aporia")) {
+        this.conversationEnded = true;
+        input.disabled = true;
+        input.placeholder = "Dialogue concluded.";
+      }
+
+      ReasoningGraph.renderGraph();
     });
   }
 };
