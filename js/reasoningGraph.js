@@ -21,19 +21,32 @@ const ReasoningGraph = {
     alternative : {color:"#3fa9f5"}   // ⭐ NEW: needed for SocraticEngine
   },
 
-  addNode(text, type = "claim") {
+  /*
+    addNode
+    --------
+    Now supports:
+    - shape: "circle" (bot) or "square" (user)
+    - colorOverride: user nodes inherit bot colour
+  */
+  addNode(text, type = "claim", shape = "circle", colorOverride = null) {
     const id = this.nodes.length + 1;
+
     const style = this.nodeStyles[type] || this.nodeStyles.claim;
-    this.nodes.push({ id, text, type, color: style.color });
+    const color = colorOverride || style.color;
+
+    this.nodes.push({ id, text, type, color, shape });
     return id;
   },
 
   addEdge(fromId, toId, type = "supports") {
-  this.edges.push({ source: fromId, target: toId, type });
-}
-,
+    this.edges.push({ source: fromId, target: toId, type });
+  },
 
-  // ⭐ NEW: Obsidian-style force-directed graph renderer
+  /*
+    renderGraph
+    ------------
+    Now draws squares for user nodes and circles for bot nodes.
+  */
   renderGraph() {
     const width = 800;
     const height = 600;
@@ -57,16 +70,32 @@ const ReasoningGraph = {
       .enter().append("line")
       .attr("stroke-width", 2);
 
+    // ⭐ NEW: draw squares for user nodes, circles for bot nodes
     const node = svg.append("g")
-      .selectAll("circle")
+      .selectAll("g")
       .data(this.nodes)
-      .enter().append("circle")
-      .attr("r", 18)
-      .attr("fill", d => d.color)
+      .enter().append("g")
       .call(d3.drag()
         .on("start", dragstarted)
         .on("drag", dragged)
         .on("end", dragended));
+
+    node.each(function(d) {
+      const g = d3.select(this);
+
+      if (d.shape === "square") {
+        g.append("rect")
+          .attr("x", -18)
+          .attr("y", -18)
+          .attr("width", 36)
+          .attr("height", 36)
+          .attr("fill", d.color);
+      } else {
+        g.append("circle")
+          .attr("r", 18)
+          .attr("fill", d.color);
+      }
+    });
 
     const label = svg.append("g")
       .selectAll("text")
@@ -84,9 +113,7 @@ const ReasoningGraph = {
         .attr("x2", d => d.target.x)
         .attr("y2", d => d.target.y);
 
-      node
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y);
+      node.attr("transform", d => `translate(${d.x},${d.y})`);
 
       label
         .attr("x", d => d.x)
