@@ -45,6 +45,11 @@ const UIController = {
       // END DIALOGUE when final aporia message appears
       if (botNode.text.includes("aporia")) {
         this.conversationEnded = true;
+
+        // Prevent NaN edges
+        this.lastNodeId = null;
+        this.lastBotNodeId = null;
+        
         input.disabled = true;
         input.placeholder = "Dialogue concluded.";
       }
