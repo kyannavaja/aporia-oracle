@@ -49,6 +49,7 @@ const UIController = {
           chatLog.innerHTML += `<div class="bot-msg">${question}</div>`;
         }
 
+        // ⭐ Terminate ONLY when aporiaCount reaches 3
         if (SocraticEngine.aporiaCount >= 3) {
           this.conversationEnded = true;
           input.disabled = true;
