@@ -2,7 +2,7 @@
   Socratic Engine
   ----------------
   Random question selection.
-  Aporia resets on normal responses.
+  Aporia resets on ANY normal response.
   Termination occurs ONLY when the user says "idk" twice in a row.
 */
 
@@ -77,7 +77,7 @@ const SocraticEngine = {
 
   processTurn(userText, lastNodeId) {
 
-    // ⭐ Reset aporia count if user gives a normal response
+    // ⭐ Reset aporia count on ANY normal response
     if (!this.isAporia(userText)) {
       this.aporiaCount = 0;
     }
