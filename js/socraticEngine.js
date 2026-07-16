@@ -1,12 +1,9 @@
 /*
   Socratic Engine
   ----------------
-  Generates Socratic questions based on user input.
-  Includes:
-  - Aporia detection
-  - Aporia state tracking
-  - Pivot questions
-  - Graceful ending
+  Random question selection.
+  User responses inherit the bot's question type.
+  Aporia detection remains simple.
 */
 
 const SocraticEngine = {
@@ -51,20 +48,33 @@ const SocraticEngine = {
     return this.addBotNode(text, "claim", lastNodeId);
   },
 
-  generateQuestion(userText) {
-    if (userText.length < 5) {
-      return { text: "Could you elaborate a bit more?", type: "question" };
-    }
+  // ⭐ NEW: Random question generator
+  generateQuestion() {
+    const types = ["question", "justification", "assumption"];
+    const type = types[Math.floor(Math.random() * types.length)];
 
-    if (userText.includes("because")) {
-      return { text: "What leads you to believe that?", type: "justification" };
-    }
+    const questions = {
+      question: [
+        "What makes you think that?",
+        "Why do you say that?",
+        "What leads you to that view?"
+      ],
+      justification: [
+        "What supports that belief?",
+        "Why do you think that is true?",
+        "What evidence makes you confident in that?"
+      ],
+      assumption: [
+        "What assumption might be behind that?",
+        "What are you taking for granted here?",
+        "What underlying idea shapes that view?"
+      ]
+    };
 
-    if (userText.includes("should")) {
-      return { text: "What assumption is behind that 'should'?", type: "assumption" };
-    }
+    const textList = questions[type];
+    const text = textList[Math.floor(Math.random() * textList.length)];
 
-    return { text: "What makes you think that?", type: "question" };
+    return { text, type };
   },
 
   processTurn(userText, lastNodeId) {
@@ -84,8 +94,8 @@ const SocraticEngine = {
       return this.endDialogue(lastNodeId);
     }
 
-    // ⭐ Normal Socratic question
-    const q = this.generateQuestion(userText);
+    // ⭐ Normal Socratic turn: RANDOM question type
+    const q = this.generateQuestion();
     return this.addBotNode(q.text, q.type, lastNodeId);
   }
 };
