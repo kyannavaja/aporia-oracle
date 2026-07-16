@@ -2,14 +2,15 @@
   Socratic Engine
   ----------------
   Random question selection.
-  User responses inherit the bot's question type.
-  Aporia detection remains simple.
+  Aporia resets on normal responses.
+  Termination occurs ONLY when the user says "idk" twice in a row.
 */
 
 const SocraticEngine = {
 
   aporiaCount: 0,
 
+  // Detect aporia phrases
   isAporia(text) {
     const phrases = [
       "i don't know",
@@ -24,31 +25,28 @@ const SocraticEngine = {
     return phrases.some(p => lower.includes(p));
   },
 
+  // Add BOT node and link it
   addBotNode(text, type, lastNodeId) {
     const nodeId = ReasoningGraph.addNode(text, type, "circle");
     ReasoningGraph.addEdge(lastNodeId, nodeId);
     return nodeId;
   },
 
+  // First aporia pivot
   askPivotQuestion(lastNodeId) {
     const text =
       "That's alright — uncertainty is part of inquiry. Let's try a different angle: what do you think might motivate this idea?";
     return this.addBotNode(text, "question", lastNodeId);
   },
 
-  askFinalPivot(lastNodeId) {
-    const text =
-      "No problem. Maybe consider this: what underlying assumption might be shaping your view?";
-    return this.addBotNode(text, "question", lastNodeId);
-  },
-
+  // Final termination message
   endDialogue(lastNodeId) {
     const text =
       "It seems we've reached aporia — a point where further questioning won't clarify things. Thank you for exploring this with me.";
     return this.addBotNode(text, "claim", lastNodeId);
   },
 
-  // ⭐ NEW: Random question generator
+  // Random question generator
   generateQuestion() {
     const types = ["question", "justification", "assumption"];
     const type = types[Math.floor(Math.random() * types.length)];
@@ -79,24 +77,28 @@ const SocraticEngine = {
 
   processTurn(userText, lastNodeId) {
 
-  // ⭐ Aporia detection
-  if (this.isAporia(userText)) {
-    this.aporiaCount++;
-
-    // First aporia → pivot
-    if (this.aporiaCount === 1) {
-      return this.askPivotQuestion(lastNodeId);
+    // ⭐ Reset aporia count if user gives a normal response
+    if (!this.isAporia(userText)) {
+      this.aporiaCount = 0;
     }
 
-    // Second aporia → TERMINATION (not final pivot)
-    if (this.aporiaCount === 2) {
-      return this.endDialogue(lastNodeId);
+    // ⭐ Aporia detection
+    if (this.isAporia(userText)) {
+      this.aporiaCount++;
+
+      // First aporia → pivot
+      if (this.aporiaCount === 1) {
+        return this.askPivotQuestion(lastNodeId);
+      }
+
+      // Second aporia → TERMINATION
+      if (this.aporiaCount === 2) {
+        return this.endDialogue(lastNodeId);
+      }
     }
+
+    // Normal Socratic turn: RANDOM question type
+    const q = this.generateQuestion();
+    return this.addBotNode(q.text, q.type, lastNodeId);
   }
-
-  // ⭐ Normal Socratic turn: RANDOM question type
-  const q = this.generateQuestion();
-  return this.addBotNode(q.text, q.type, lastNodeId);
-}
-
 };
