@@ -46,7 +46,7 @@ const UIController = {
         // Process Socratic turn → BOT node
         const botNodeId = SocraticEngine.processTurn(text, userNodeId);
 
-        // Update tracking
+        // Update trackinggg
         this.lastNodeId = botNodeId;
         this.lastBotNodeId = botNodeId;
 
