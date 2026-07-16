@@ -46,6 +46,9 @@ const UIController = {
         // ⭐ Display the Socratic question in chat
         const question = ReasoningGraph.nodes[this.lastNodeId - 1].text;
         chatLog.innerHTML += `<div class="bot-msg">${question}</div>`;
+
+        // Render updated graph
+        ReasoningGraph.renderGraph();
       }
     });
   }
