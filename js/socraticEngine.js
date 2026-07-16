@@ -1,9 +1,10 @@
 /*
   Socratic Engine
   ----------------
-  Random question selection.
-  Aporia resets on ANY normal response.
-  Termination occurs ONLY when the user says "idk" twice in a row.
+  Simple aporia tally:
+  1st aporia → pivot
+  2nd aporia → final pivot
+  3rd aporia → termination
 */
 
 const SocraticEngine = {
@@ -39,7 +40,14 @@ const SocraticEngine = {
     return this.addBotNode(text, "question", lastNodeId);
   },
 
-  // Final termination message
+  // Second aporia pivot
+  askFinalPivot(lastNodeId) {
+    const text =
+      "No problem. Maybe consider this: what underlying assumption might be shaping your view?";
+    return this.addBotNode(text, "question", lastNodeId);
+  },
+
+  // Third aporia → termination
   endDialogue(lastNodeId) {
     const text =
       "It seems we've reached aporia — a point where further questioning won't clarify things. Thank you for exploring this with me.";
@@ -77,22 +85,19 @@ const SocraticEngine = {
 
   processTurn(userText, lastNodeId) {
 
-    // ⭐ Reset aporia count on ANY normal response
-    if (!this.isAporia(userText)) {
-      this.aporiaCount = 0;
-    }
-
-    // ⭐ Aporia detection
+    // Aporia detection
     if (this.isAporia(userText)) {
       this.aporiaCount++;
 
-      // First aporia → pivot
       if (this.aporiaCount === 1) {
         return this.askPivotQuestion(lastNodeId);
       }
 
-      // Second aporia → TERMINATION
       if (this.aporiaCount === 2) {
+        return this.askFinalPivot(lastNodeId);
+      }
+
+      if (this.aporiaCount === 3) {
         return this.endDialogue(lastNodeId);
       }
     }
