@@ -57,14 +57,16 @@ const UIController = {
           chatLog.innerHTML += `<div class="bot-msg">${question}</div>`;
         }
 
-        // ⭐ Detect aporia termination
-        if (botNode.type === "claim" &&
-            botNode.text.includes("aporia")) {
+        // ⭐ Detect aporia termination after SECOND pivot
+if (botNode.text.includes("uncertainty is part of inquiry") ||   // first pivot
+    botNode.text.includes("underlying assumption") ||            // second pivot
+    botNode.text.includes("aporia — a point")) {                 // final termination
 
-          this.conversationEnded = true;
-          input.disabled = true;
-          input.placeholder = "Dialogue concluded.";
-        }
+  this.conversationEnded = true;
+  input.disabled = true;
+  input.placeholder = "Dialogue concluded.";
+}
+
 
         // Render updated graph
         ReasoningGraph.renderGraph();
